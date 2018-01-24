@@ -1,0 +1,64 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose -f /Users/greguska/githubprojects/esgf/esgf-docker/docker-compose-greguska.yml
+      convert
+    kompose.version: 1.7.0 (767ab4b)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: esgf-publisher
+  name: esgf-publisher
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: esgf-publisher
+    spec:
+      containers:
+      - env:
+        - name: ESGF_HOSTNAME
+          value: my-node.esgf.org
+        - name: SSL_CERT_DIR
+          value: /etc/grid-security/certificates
+        image: esgfhub/esgf-publisher:1.4
+        name: publisher
+        resources: {}
+        volumeMounts:
+        - mountPath: /esg/content/thredds
+          name: tds-data
+        - mountPath: /esg/data
+          name: esgf-publisher-claim1
+        - mountPath: /etc/certs/
+          name: esgf-publisher-claim2
+        - mountPath: /etc/httpd/conf.d/esgf-httpd.conf
+          name: esgf-publisher-claim3
+        - mountPath: /root/archives/grid_security_certs.tar.xz
+          name: esgf-publisher-claim4
+        - mountPath: /root/archives/esgf_config.tar.xz
+          name: esgf-publisher-claim5
+      restartPolicy: Always
+      volumes:
+      - name: tds-data
+        persistentVolumeClaim:
+          claimName: tds-data
+      - name: esgf-publisher-claim1
+        persistentVolumeClaim:
+          claimName: esgf-publisher-claim1
+      - name: esgf-publisher-claim2
+        persistentVolumeClaim:
+          claimName: esgf-publisher-claim2
+      - name: esgf-publisher-claim3
+        persistentVolumeClaim:
+          claimName: esgf-publisher-claim3
+      - name: esgf-publisher-claim4
+        persistentVolumeClaim:
+          claimName: esgf-publisher-claim4
+      - name: esgf-publisher-claim5
+        persistentVolumeClaim:
+          claimName: esgf-publisher-claim5
+status: {}

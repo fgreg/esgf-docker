@@ -1,0 +1,84 @@
+apiVersion: v1
+kind: DeploymentConfig
+metadata:
+  annotations:
+    kompose.cmd: kompose --provider openshift -f /Users/greguska/githubprojects/esgf/esgf-docker/docker-compose-greguska.yml
+      convert
+    kompose.version: 1.7.0 (767ab4b)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: esgf-tds
+  name: esgf-tds
+spec:
+  replicas: 1
+  selector:
+    io.kompose.service: esgf-tds
+  strategy:
+    resources: {}
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: esgf-tds
+    spec:
+      containers:
+      - env:
+        - name: ESGF_HOSTNAME
+          value: my-node.esgf.org
+        image: ' '
+        name: tds
+        ports:
+        - containerPort: 8080
+        - containerPort: 8443
+        resources: {}
+        volumeMounts:
+        - mountPath: /esg/content/thredds
+          name: tds-data
+        - mountPath: /usr/local/tomcat/webapps/thredds/WEB-INF/web.xml
+          name: esgf-tds-claim1
+        - mountPath: /esg/data
+          name: esgf-tds-claim2
+        - mountPath: /etc/certs/
+          name: esgf-tds-claim3
+        - mountPath: /etc/httpd/conf.d/esgf-httpd.conf
+          name: esgf-tds-claim4
+        - mountPath: /root/archives/grid_security_certs.tar.xz
+          name: esgf-tds-claim5
+        - mountPath: /root/archives/esgf_config.tar.xz
+          name: esgf-tds-claim6
+      restartPolicy: Always
+      volumes:
+      - name: tds-data
+        persistentVolumeClaim:
+          claimName: tds-data
+      - name: esgf-tds-claim1
+        persistentVolumeClaim:
+          claimName: esgf-tds-claim1
+      - name: esgf-tds-claim2
+        persistentVolumeClaim:
+          claimName: esgf-tds-claim2
+      - name: esgf-tds-claim3
+        persistentVolumeClaim:
+          claimName: esgf-tds-claim3
+      - name: esgf-tds-claim4
+        persistentVolumeClaim:
+          claimName: esgf-tds-claim4
+      - name: esgf-tds-claim5
+        persistentVolumeClaim:
+          claimName: esgf-tds-claim5
+      - name: esgf-tds-claim6
+        persistentVolumeClaim:
+          claimName: esgf-tds-claim6
+  test: false
+  triggers:
+  - type: ConfigChange
+  - imageChangeParams:
+      automatic: true
+      containerNames:
+      - tds
+      from:
+        kind: ImageStreamTag
+        name: esgf-tds:1.4
+    type: ImageChange
+status: {}

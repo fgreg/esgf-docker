@@ -1,0 +1,34 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose -f /Users/greguska/githubprojects/esgf/esgf-docker/docker-compose-greguska.yml
+      convert
+    kompose.version: 1.7.0 (767ab4b)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: esgf-auth
+  name: esgf-auth
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: esgf-auth
+    spec:
+      containers:
+      - image: esgfhub/esgf-auth:1.4
+        name: esgf-auth
+        resources: {}
+        volumeMounts:
+        - mountPath: /usr/local/esgf-auth
+          name: esgf-auth-install
+      restartPolicy: Always
+      volumes:
+      - name: esgf-auth-install
+        persistentVolumeClaim:
+          claimName: esgf-auth-install
+status: {}

@@ -1,0 +1,55 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose -f /Users/greguska/githubprojects/esgf/esgf-docker/docker-compose-greguska.yml
+      convert
+    kompose.version: 1.7.0 (767ab4b)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: esgf-orp
+  name: esgf-orp
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: esgf-orp
+    spec:
+      containers:
+      - env:
+        - name: ESGF_HOSTNAME
+          value: my-node.esgf.org
+        image: esgfhub/esgf-orp:1.4
+        name: orp
+        ports:
+        - containerPort: 8080
+        - containerPort: 8443
+        resources: {}
+        volumeMounts:
+        - mountPath: /etc/certs/
+          name: esgf-orp-claim0
+        - mountPath: /etc/httpd/conf.d/esgf-httpd.conf
+          name: esgf-orp-claim1
+        - mountPath: /root/archives/grid_security_certs.tar.xz
+          name: esgf-orp-claim2
+        - mountPath: /root/archives/esgf_config.tar.xz
+          name: esgf-orp-claim3
+      restartPolicy: Always
+      volumes:
+      - name: esgf-orp-claim0
+        persistentVolumeClaim:
+          claimName: esgf-orp-claim0
+      - name: esgf-orp-claim1
+        persistentVolumeClaim:
+          claimName: esgf-orp-claim1
+      - name: esgf-orp-claim2
+        persistentVolumeClaim:
+          claimName: esgf-orp-claim2
+      - name: esgf-orp-claim3
+        persistentVolumeClaim:
+          claimName: esgf-orp-claim3
+status: {}

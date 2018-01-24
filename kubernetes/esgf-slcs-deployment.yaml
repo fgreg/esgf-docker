@@ -1,0 +1,68 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose -f /Users/greguska/githubprojects/esgf/esgf-docker/docker-compose-greguska.yml
+      convert
+    kompose.version: 1.7.0 (767ab4b)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: esgf-slcs
+  name: esgf-slcs
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: esgf-slcs
+    spec:
+      containers:
+      - args:
+        - -sn
+        - my-node.esgf.org
+        - -ds
+        - rootAdmin
+        - -sdn
+        - slcs
+        - -sdh
+        - slcs-postgres
+        - -sdu
+        - dbsuper
+        - -udn
+        - esgcet
+        - -udh
+        - esgf-postgres
+        - -udu
+        - dbsuper
+        - --static-url
+        - https://my-node.esgf.org/slcs-static/
+        - --url-prefix
+        - esgf-slcs
+        - --use-x-forwarded-host
+        image: esgfhub/esgf-slcs:1.4
+        name: esgf-slcs
+        ports:
+        - containerPort: 5000
+        resources: {}
+        volumeMounts:
+        - mountPath: /var/www/static
+          name: slcs-static-web
+        - mountPath: /usr/local/esgf-slcs-server/conf/db
+          name: esgf-slcs-claim1
+        - mountPath: /usr/local/esgf-slcs-server/conf/ca
+          name: esgf-slcs-claim2
+      restartPolicy: Always
+      volumes:
+      - name: slcs-static-web
+        persistentVolumeClaim:
+          claimName: slcs-static-web
+      - name: esgf-slcs-claim1
+        persistentVolumeClaim:
+          claimName: esgf-slcs-claim1
+      - name: esgf-slcs-claim2
+        persistentVolumeClaim:
+          claimName: esgf-slcs-claim2
+status: {}

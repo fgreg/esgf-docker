@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose --provider openshift -f /Users/greguska/githubprojects/esgf/esgf-docker/docker-compose-greguska.yml
+      convert
+    kompose.version: 1.7.0 (767ab4b)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: esgf-tds
+  name: esgf-tds
+spec:
+  ports:
+  - name: "8084"
+    port: 8084
+    targetPort: 8080
+  - name: "8447"
+    port: 8447
+    targetPort: 8443
+  selector:
+    io.kompose.service: esgf-tds
+status:
+  loadBalancer: {}

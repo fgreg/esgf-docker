@@ -1,0 +1,78 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose -f /Users/greguska/githubprojects/esgf/esgf-docker/docker-compose-greguska.yml
+      convert
+    kompose.version: 1.7.0 (767ab4b)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: esgf-httpd
+  name: esgf-httpd
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: esgf-httpd
+    spec:
+      containers:
+      - command:
+        - /usr/local/bin/docker-entrypoint.sh
+        env:
+        - name: COG_CONFIG_DIR
+          value: /usr/local/cog/cog_config
+        - name: ESGF_HOSTNAME
+          value: my-node.esgf.org
+        - name: SSL_CERT_DIR
+          value: /etc/grid-security/certificates
+        - name: SSL_CERT_FILE
+          value: /etc/certs/esgf-ca-bundle.crt
+        image: esgfhub/esgf-httpd:1.4
+        name: httpd
+        ports:
+        - containerPort: 80
+        - containerPort: 443
+        resources: {}
+        volumeMounts:
+        - mountPath: /usr/local/cog/cog_config
+          name: cog-data
+        - mountPath: /usr/local/esgf-auth
+          name: esgf-auth-install
+        - mountPath: /usr/local/esgf-auth/src/esgf-auth/esgf_auth/settings.py
+          name: esgf-httpd-claim2
+        - mountPath: /etc/certs/
+          name: esgf-httpd-claim3
+        - mountPath: /etc/httpd/conf.d/esgf-httpd.conf
+          name: esgf-httpd-claim4
+        - mountPath: /root/archives/grid_security_certs.tar.xz
+          name: esgf-httpd-claim5
+        - mountPath: /root/archives/esgf_config.tar.xz
+          name: esgf-httpd-claim6
+      restartPolicy: Always
+      volumes:
+      - name: cog-data
+        persistentVolumeClaim:
+          claimName: cog-data
+      - name: esgf-auth-install
+        persistentVolumeClaim:
+          claimName: esgf-auth-install
+      - name: esgf-httpd-claim2
+        persistentVolumeClaim:
+          claimName: esgf-httpd-claim2
+      - name: esgf-httpd-claim3
+        persistentVolumeClaim:
+          claimName: esgf-httpd-claim3
+      - name: esgf-httpd-claim4
+        persistentVolumeClaim:
+          claimName: esgf-httpd-claim4
+      - name: esgf-httpd-claim5
+        persistentVolumeClaim:
+          claimName: esgf-httpd-claim5
+      - name: esgf-httpd-claim6
+        persistentVolumeClaim:
+          claimName: esgf-httpd-claim6
+status: {}

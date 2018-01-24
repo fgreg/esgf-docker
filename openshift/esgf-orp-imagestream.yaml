@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ImageStream
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: esgf-orp
+  name: esgf-orp
+spec:
+  tags:
+  - annotations: null
+    from:
+      kind: DockerImage
+      name: esgfhub/esgf-orp:1.4
+    generation: null
+    importPolicy: {}
+    name: "1.4"
+status:
+  dockerImageRepository: ""

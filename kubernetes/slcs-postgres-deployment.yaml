@@ -1,0 +1,35 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose -f /Users/greguska/githubprojects/esgf/esgf-docker/docker-compose-greguska.yml
+      convert
+    kompose.version: 1.7.0 (767ab4b)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: slcs-postgres
+  name: slcs-postgres
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: slcs-postgres
+    spec:
+      containers:
+      - env:
+        - name: POSTGRES_DB
+          value: slcs
+        - name: POSTGRES_INITDB_ARGS
+          value: --encoding=UTF-8
+        - name: POSTGRES_PASSWORD
+          value: changeit
+        - name: POSTGRES_USER
+          value: dbsuper
+        image: postgres
+        name: slcs-postgres
+        resources: {}
+      restartPolicy: Always
+status: {}

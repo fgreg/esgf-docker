@@ -1,0 +1,57 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose -f /Users/greguska/githubprojects/esgf/esgf-docker/docker-compose-greguska.yml
+      convert
+    kompose.version: 1.7.0 (767ab4b)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: esgf-solr
+  name: esgf-solr
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: esgf-solr
+    spec:
+      containers:
+      - image: esgfhub/esgf-solr:1.4
+        name: solr
+        ports:
+        - containerPort: 8983
+        - containerPort: 8984
+        resources: {}
+        volumeMounts:
+        - mountPath: /esg/solr-index
+          name: solr-data
+        - mountPath: /etc/certs/
+          name: esgf-solr-claim1
+        - mountPath: /etc/httpd/conf.d/esgf-httpd.conf
+          name: esgf-solr-claim2
+        - mountPath: /root/archives/grid_security_certs.tar.xz
+          name: esgf-solr-claim3
+        - mountPath: /root/archives/esgf_config.tar.xz
+          name: esgf-solr-claim4
+      restartPolicy: Always
+      volumes:
+      - name: solr-data
+        persistentVolumeClaim:
+          claimName: solr-data
+      - name: esgf-solr-claim1
+        persistentVolumeClaim:
+          claimName: esgf-solr-claim1
+      - name: esgf-solr-claim2
+        persistentVolumeClaim:
+          claimName: esgf-solr-claim2
+      - name: esgf-solr-claim3
+        persistentVolumeClaim:
+          claimName: esgf-solr-claim3
+      - name: esgf-solr-claim4
+        persistentVolumeClaim:
+          claimName: esgf-solr-claim4
+status: {}

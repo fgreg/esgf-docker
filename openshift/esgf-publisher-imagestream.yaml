@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ImageStream
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: esgf-publisher
+  name: esgf-publisher
+spec:
+  tags:
+  - annotations: null
+    from:
+      kind: DockerImage
+      name: esgfhub/esgf-publisher:1.4
+    generation: null
+    importPolicy: {}
+    name: "1.4"
+status:
+  dockerImageRepository: ""
